@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from license_gate import BRAND, check_entitlement, pricing_text, save_license
+from license_gate import BRAND, check_entitlement, is_in_free_period, pricing_text, save_license
 from sph_core import download_share, extract_share_url, fetch_profile
 
 
@@ -39,11 +39,14 @@ def main(argv: list[str] | None = None) -> int:
         return 0 if st.ok else 1
 
     entitlement = check_entitlement()
-    print(entitlement.message)
     if not entitlement.ok:
+        print(entitlement.message, file=sys.stderr)
         print(pricing_text(), file=sys.stderr)
         print("提示：python scripts/download_sph.py --license 你的授权码", file=sys.stderr)
         return 2
+    # 免费期内不打印授权相关提示；过期且已授权时再提示状态
+    if not is_in_free_period():
+        print(entitlement.message)
 
     if not args.url:
         parser.error("请提供分享链接，或使用 --license / --pricing")

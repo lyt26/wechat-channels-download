@@ -27,10 +27,10 @@ from license_gate import (  # noqa: E402
     BRAND,
     BRAND_FULL,
     CONTACT,
-    FREE_UNTIL,
     PRICE_LIFE,
     PRICE_MONTH,
     check_entitlement,
+    is_in_free_period,
     pricing_text,
     save_license,
 )
@@ -68,7 +68,7 @@ class App(tk.Tk):
 
         self._build_style()
         self._build_ui()
-        self.refresh_license_banner()
+        self._apply_license_ui_visibility()
         self.after(200, self._startup_license_check)
 
     def _build_style(self) -> None:
@@ -97,7 +97,7 @@ class App(tk.Tk):
         ).pack(pady=(12, 2))
         tk.Label(
             brand,
-            text="视频号一键下载 · 正版授权由强哥签发",
+            text="视频号一键下载",
             bg=BRAND_BG,
             fg=BRAND_FG,
             font=("Microsoft YaHei UI", 10),
@@ -112,7 +112,8 @@ class App(tk.Tk):
             text="小白三步：复制链接 → 粘贴到这里 → 点下载。不用命令行。",
             style="Sub.TLabel",
         ).pack(anchor="w", pady=(4, 0))
-        ttk.Label(head, textvariable=self.license_var, style="Sub.TLabel").pack(anchor="w", pady=(6, 0))
+        self.license_label = ttk.Label(head, textvariable=self.license_var, style="Sub.TLabel")
+        # 免费期内不显示；过期后由 _apply_license_ui_visibility 打开
 
         card = tk.Frame(self, bg=CARD, highlightbackground=BORDER, highlightthickness=1, bd=0)
         card.pack(fill="both", expand=True, padx=24, pady=8)
@@ -136,8 +137,8 @@ class App(tk.Tk):
         btn_row.pack(fill="x", padx=16, pady=8)
         ttk.Button(btn_row, text="从剪贴板粘贴", command=self.paste_clipboard).pack(side="left")
         ttk.Button(btn_row, text="清空", command=lambda: self.text.delete("1.0", "end")).pack(side="left", padx=8)
-        ttk.Button(btn_row, text="输入授权码", command=self.prompt_license).pack(side="left", padx=8)
-        ttk.Button(btn_row, text="价格说明", command=self.show_pricing).pack(side="left")
+        self.btn_license = ttk.Button(btn_row, text="输入授权码", command=self.prompt_license)
+        self.btn_pricing = ttk.Button(btn_row, text="价格说明", command=self.show_pricing)
 
         ttk.Label(card, text="② 选择保存文件夹", style="Card.TLabel").pack(anchor="w", padx=16, pady=(8, 6))
         path_row = ttk.Frame(card, style="Card.TFrame")
@@ -185,19 +186,41 @@ class App(tk.Tk):
         ttk.Button(foot, text="打开刚下的视频", command=self.open_last_file).pack(side="left", padx=8)
         ttk.Label(foot, textvariable=self.status_var, style="Sub.TLabel").pack(side="left", padx=12)
 
+        self.footer_var = tk.StringVar(value=BRAND_FULL)
         tk.Label(
             self,
-            text=f"{BRAND_FULL}  |  免费至 {FREE_UNTIL.isoformat()}  |  之后月付¥{PRICE_MONTH} / 买断¥{PRICE_LIFE}  |  {CONTACT}",
+            textvariable=self.footer_var,
             bg=BG,
             fg=MUTED,
             font=("Microsoft YaHei UI", 8),
         ).pack(fill="x", padx=24, pady=(0, 10))
 
-    def refresh_license_banner(self) -> None:
+    def _apply_license_ui_visibility(self) -> None:
+        """免费期内隐藏一切授权相关展示；过期后再显示。"""
+        if is_in_free_period():
+            self.license_var.set("")
+            self.license_label.pack_forget()
+            self.btn_license.pack_forget()
+            self.btn_pricing.pack_forget()
+            self.footer_var.set(BRAND_FULL)
+            return
+
         st = check_entitlement()
         self.license_var.set(f"授权状态：{st.message}")
+        self.license_label.pack(anchor="w", pady=(6, 0))
+        self.btn_license.pack(side="left", padx=8)
+        self.btn_pricing.pack(side="left")
+        self.footer_var.set(
+            f"{BRAND_FULL}  |  月付¥{PRICE_MONTH} / 买断¥{PRICE_LIFE}  |  {CONTACT}"
+        )
+
+    def refresh_license_banner(self) -> None:
+        self._apply_license_ui_visibility()
 
     def _startup_license_check(self) -> None:
+        # 免费期内不弹授权窗
+        if is_in_free_period():
+            return
         st = check_entitlement()
         if not st.ok:
             messagebox.showwarning("需要授权", st.message)
@@ -224,6 +247,8 @@ class App(tk.Tk):
         self.refresh_license_banner()
 
     def ensure_can_run(self) -> bool:
+        if is_in_free_period():
+            return True
         st = check_entitlement()
         self.refresh_license_banner()
         if st.ok:

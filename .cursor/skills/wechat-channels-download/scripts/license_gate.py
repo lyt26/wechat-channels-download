@@ -120,16 +120,18 @@ def load_saved_license(today: date | None = None) -> LicenseStatus | None:
         return LicenseStatus(False, "locked", "本地授权文件损坏，请重新输入授权码")
 
 
+def is_in_free_period(today: date | None = None) -> bool:
+    """True when users may use the app without seeing/using auth UI."""
+    today = today or date.today()
+    return today <= FREE_UNTIL
+
+
 def check_entitlement(today: date | None = None) -> LicenseStatus:
     """Return whether the product may be used today."""
     today = today or date.today()
-    if today <= FREE_UNTIL:
-        return LicenseStatus(
-            True,
-            "free",
-            f"{BRAND} · 免费试用至 {FREE_UNTIL.isoformat()}（之后需授权）",
-            expires=FREE_UNTIL,
-        )
+    if is_in_free_period(today):
+        # Keep message short; UI should not surface auth wording during free period.
+        return LicenseStatus(True, "free", BRAND, expires=FREE_UNTIL)
 
     saved = load_saved_license(today=today)
     if saved and saved.ok:
