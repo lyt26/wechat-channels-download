@@ -53,7 +53,7 @@
 python gui/app.py
 ```
 
-> 出品：**上海三松强哥**。软件可一直正常使用到 2027-12-31；之后如需继续使用，按软件提示联系强哥获取授权即可（发行方说明见 [`docs/HOW_TO_AUTHORIZE.md`](docs/HOW_TO_AUTHORIZE.md)）。
+> 出品：**上海三松强哥**。软件可正常使用到 2027-12-31；之后如需继续使用，软件会弹出微信支付收款码（月付 ¥5 / 买断 ¥15），付款后联系强哥领取授权码。发行方说明见 [`docs/HOW_TO_AUTHORIZE.md`](docs/HOW_TO_AUTHORIZE.md)。
 
 ---
 

@@ -27,10 +27,12 @@ from license_gate import (  # noqa: E402
     BRAND,
     BRAND_FULL,
     CONTACT,
+    PAY_HINT,
     PRICE_LIFE,
     PRICE_MONTH,
     check_entitlement,
     is_in_free_period,
+    pay_qr_path,
     pricing_text,
     save_license,
 )
@@ -223,11 +225,65 @@ class App(tk.Tk):
             return
         st = check_entitlement()
         if not st.ok:
-            messagebox.showwarning("需要授权", st.message)
-            self.prompt_license()
+            self.show_pricing(force=True)
 
-    def show_pricing(self) -> None:
-        messagebox.showinfo("授权价格", pricing_text())
+    def show_pricing(self, force: bool = False) -> None:
+        """Show pay QR + prices. Only meaningful after free period (or force)."""
+        if is_in_free_period() and not force:
+            return
+        win = tk.Toplevel(self)
+        win.title(f"扫码付款 · {BRAND}")
+        win.configure(bg=BG)
+        win.geometry("420x640")
+        win.transient(self)
+        win.grab_set()
+
+        tk.Label(win, text=BRAND, bg=BG, fg=TEXT, font=("Microsoft YaHei UI", 14, "bold")).pack(pady=(16, 4))
+        tk.Label(
+            win,
+            text=f"月付 ¥{PRICE_MONTH} / 月　　买断 ¥{PRICE_LIFE}",
+            bg=BG,
+            fg=GREEN_DARK,
+            font=("Microsoft YaHei UI", 12, "bold"),
+        ).pack()
+        tk.Label(win, text=PAY_HINT, bg=BG, fg=MUTED, font=("Microsoft YaHei UI", 10)).pack(pady=(8, 4))
+
+        qr = pay_qr_path()
+        self._pay_photo = None
+        if qr is not None:
+            try:
+                from PIL import Image, ImageTk
+
+                img = Image.open(qr)
+                img.thumbnail((320, 480), Image.Resampling.LANCZOS)
+                self._pay_photo = ImageTk.PhotoImage(img)
+                tk.Label(win, image=self._pay_photo, bg=BG).pack(pady=8)
+            except Exception:
+                try:
+                    self._pay_photo = tk.PhotoImage(file=str(qr))
+                    # scale down if huge
+                    tk.Label(win, image=self._pay_photo, bg=BG).pack(pady=8)
+                except tk.TclError:
+                    tk.Label(win, text="（收款码加载失败，请联系强哥）", bg=BG, fg="red").pack()
+        else:
+            tk.Label(win, text="（未找到收款码图片）", bg=BG, fg="red").pack()
+
+        tk.Label(
+            win,
+            text=CONTACT,
+            bg=BG,
+            fg=TEXT,
+            font=("Microsoft YaHei UI", 9),
+            wraplength=360,
+            justify="center",
+        ).pack(pady=(4, 12))
+
+        row = ttk.Frame(win)
+        row.pack(pady=8)
+        ttk.Button(row, text="我已付款，输入授权码", command=lambda: (win.destroy(), self.prompt_license())).pack(
+            side="left", padx=6
+        )
+        ttk.Button(row, text="关闭", command=win.destroy).pack(side="left", padx=6)
 
     def prompt_license(self) -> None:
         raw = simpledialog.askstring(
@@ -253,8 +309,7 @@ class App(tk.Tk):
         self.refresh_license_banner()
         if st.ok:
             return True
-        messagebox.showwarning("需要授权", st.message)
-        self.prompt_license()
+        self.show_pricing(force=True)
         return check_entitlement().ok
 
     def paste_clipboard(self) -> None:
