@@ -1,6 +1,6 @@
-# Build Windows GUI release (one-file exe)
+# Build Windows GUI release
 
-Run from repo root on Windows:
+## 便携 exe
 
 ```powershell
 pip install pyinstaller
@@ -12,7 +12,16 @@ pyinstaller --noconfirm --clean --windowed --onefile `
   --collect-all PIL `
   --add-data "docs/assets/wechat-pay-qr.png;docs/assets" `
   gui/app.py
+
+Copy-Item dist\WeChatChannelsDownloader.exe release_assets\ShipinhaoDownloader-Xiaobai.exe -Force
 ```
 
-Output: `dist/WeChatChannelsDownloader.exe`  
-二维码用于「请喝咖啡」自愿打赏。
+## 安装向导（Setup.exe）
+
+先安装 [Inno Setup 6](https://jrsoftware.org/isinfo.php)，再执行：
+
+```powershell
+& "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe" tools\xiaobai_setup.iss
+```
+
+输出：`release_assets/ShipinhaoDownloader-Xiaobai-Setup.exe`
