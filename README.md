@@ -37,9 +37,9 @@
 > **不会命令行？直接双击就行。**
 
 1. 打开 [Releases 发布页](https://github.com/lyt26/wechat-channels-download/releases/latest)
-2. 下载 **`WeChatChannelsDownloader-Windows.exe`**（约 11 MB）
+2. 下载 **`ShipinhaoDownloader-Xiaobai.exe`**（小白版）或 `WeChatChannelsDownloader-Windows-v1.2.0.exe`
 3. 双击运行 → 粘贴微信分享链接 → 点绿色「开始下载」
-4. 视频默认保存在：`我的文档/Downloads/视频号下载`
+4. 视频默认保存在：`下载/视频号下载`
 
 <p align="center">
   <a href="https://github.com/lyt26/wechat-channels-download/releases/latest"><img alt="Download Windows GUI" src="https://img.shields.io/badge/⬇%20下载%20Windows%20界面版-latest-07C160?style=for-the-badge" /></a>
