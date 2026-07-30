@@ -1,33 +1,35 @@
-﻿; 瑙嗛鍙蜂笅杞藉櫒锛堝皬鐧界増锛夊畨瑁呭悜瀵?鈥?Inno Setup
-; 缂栬瘧: ISCC.exe tools\xiaobai_setup.iss
+﻿; Shipinhao Downloader Setup - Inno Setup 6 (UTF-8 BOM)
+; Compile: ISCC.exe tools\xiaobai_setup.iss
 
-#define MyAppName "瑙嗛鍙蜂笅杞藉櫒锛堝皬鐧界増锛?
-#define MyAppVersion "1.2.1"
-#define MyAppPublisher "涓婃捣涓夋澗寮哄摜"
+#define MyAppName "视频号下载器"
+#define MyAppNameFull "视频号下载器（小白版）"
+#define MyAppVersion "1.2.2"
+#define MyAppPublisher "上海三松强哥"
 #define MyAppURL "https://github.com/lyt26/wechat-channels-download"
 #define MyAppExeName "ShipinhaoDownloader.exe"
+#define MyAppShortcut "ShipinhaoDownloader"
 
 [Setup]
 AppId={{A7C3E91B-2D44-4F8A-9C11-5B8E0F3A6D21}
-AppName={#MyAppName}
+AppName={#MyAppNameFull}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 DefaultDirName={autopf}\SanSongQiangGe\ShipinhaoDownloader
-DefaultGroupName=涓婃捣涓夋澗寮哄摜
+DefaultGroupName=SanSongQiangGe
 DisableProgramGroupPage=yes
 OutputDir=..\release_assets
 OutputBaseFilename=ShipinhaoDownloader-Xiaobai-Setup
-SetupIconFile=
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
 PrivilegesRequired=admin
 ArchitecturesInstallIn64BitMode=x64compatible
-UninstallDisplayName={#MyAppName}
-InfoBeforeFile=
-LicenseFile=
+UninstallDisplayName={#MyAppNameFull}
+VersionInfoVersion=1.2.2
+VersionInfoProductName={#MyAppName}
+VersionInfoCompany={#MyAppPublisher}
 
 [Languages]
 Name: "chinesesimplified"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
@@ -39,10 +41,10 @@ Name: "desktopicon"; Description: "创建桌面快捷方式"; GroupDescription: 
 Source: "..\release_assets\ShipinhaoDownloader-Xiaobai.exe"; DestDir: "{app}"; DestName: "{#MyAppExeName}"; Flags: ignoreversion
 
 [Icons]
-Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
-Name: "{group}\卸载 {#MyAppName}"; Filename: "{uninstallexe}"
-Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+; Shortcut filenames stay ASCII to avoid IPersistFile::Save 0x8007007B
+Name: "{group}\{#MyAppShortcut}"; Filename: "{app}\{#MyAppExeName}"; Comment: "{#MyAppNameFull}"
+Name: "{group}\Uninstall {#MyAppShortcut}"; Filename: "{uninstallexe}"; Comment: "卸载"
+Name: "{autodesktop}\{#MyAppShortcut}"; Filename: "{app}\{#MyAppExeName}"; Comment: "{#MyAppNameFull}"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "立即运行 {#MyAppName}"; Flags: nowait postinstall skipifsilent
-
