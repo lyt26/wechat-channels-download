@@ -53,9 +53,9 @@
 python gui/app.py
 ```
 
-> **上海三松强哥出品** · 源码 MIT 开源。  
-> 觉得有用请 Star ⭐；赞助 / 定制 / 官方版维护请加 **QQ：3031635159**。  
-> 详见 [`docs/SUPPORT.md`](docs/SUPPORT.md)
+> **上海三松强哥出品** · 源码 MIT 开源 · **现在完全免费使用**  
+> 觉得有用请 Star ⭐；想请强哥喝咖啡 / 联系加 **QQ：3031635159**  
+> 详见 [`docs/SUPPORT.md`](docs/SUPPORT.md)（无授权、无到期锁；打包维护等星多了再说）
 
 ---
 
@@ -205,8 +205,8 @@ python scripts/download_sph.py "https://weixin.qq.com/sph/xxxx" -o ./downloads -
 **Q：可以商用批量扒别人视频吗？**  
 不可以。本工具面向个人合法备份 / 已授权素材。批量搬运他人作品可能侵犯著作权，也违反平台规则。定制开发边界见 [`docs/SUPPORT.md`](docs/SUPPORT.md)。
 
-**Q：想赞助或定制找谁？**  
-加 QQ **3031635159**（备注来意）。说明见 [`docs/SUPPORT.md`](docs/SUPPORT.md)。
+**Q：想请喝咖啡或联系找谁？**  
+加 QQ **3031635159**。自愿请咖啡即可，不影响使用。见 [`docs/SUPPORT.md`](docs/SUPPORT.md)。
 
 **Q：解析服务挂了怎么办？**  
 可用 [在线解析页](https://sph.litao.workers.dev/) 或 PC 微信插件方案（见 Skill 文档回退流程）。
@@ -215,11 +215,11 @@ python scripts/download_sph.py "https://weixin.qq.com/sph/xxxx" -o ./downloads -
 
 ## 🗺 路线图（一起打造成爆款）
 
-- [x] 图形界面（双击即用，更适合小白）— **v1.0.0 Windows 已发布**
-- [ ] 批量下载多个链接
-- [ ] 可选封面一并保存
-- [ ] macOS / Linux 打包
-- [ ] GitHub Action 自动发版
+- [x] 图形界面（双击即用）  
+- [ ] 批量下载多个链接  
+- [ ] 可选封面一并保存  
+- [ ] macOS / Linux 打包  
+- [ ] Star 多了再谈：官方打包与长期维护说明  
 - [ ] 更多语言文档
 
 有想法请开 Issue；愿意贡献请提 PR。  

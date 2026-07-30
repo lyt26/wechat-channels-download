@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Beginner-friendly GUI for WeChat Channels (视频号) download.
 
-Brand: 上海三松强哥出品
+Brand: 上海三松强哥出品 — no license gate; optional「请喝咖啡」.
 """
 
 from __future__ import annotations
@@ -13,9 +13,8 @@ import threading
 import tkinter as tk
 import urllib.error
 from pathlib import Path
-from tkinter import filedialog, messagebox, simpledialog, ttk
+from tkinter import filedialog, messagebox, ttk
 
-# Allow running from repo root / PyInstaller bundle
 ROOT = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parents[1]))
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
@@ -23,20 +22,7 @@ REPO = Path(__file__).resolve().parents[1] if not getattr(sys, "frozen", False) 
 if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
-from license_gate import (  # noqa: E402
-    BRAND,
-    BRAND_FULL,
-    CONTACT,
-    PAY_HINT,
-    PRICE_LIFE,
-    PRICE_MONTH,
-    QQ,
-    check_entitlement,
-    is_in_free_period,
-    pay_qr_path,
-    pricing_text,
-    save_license,
-)
+from brand import BRAND, BRAND_FULL, COFFEE_HINT, CONTACT, QQ, coffee_text, pay_qr_path  # noqa: E402
 from sph_core import download_share  # noqa: E402
 
 GREEN = "#07C160"
@@ -57,22 +43,20 @@ class App(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
         self.title(f"视频号下载器 · {BRAND}")
-        self.geometry("760x640")
-        self.minsize(680, 580)
+        self.geometry("760x600")
+        self.minsize(680, 540)
         self.configure(bg=BG)
         self._busy = False
         self._last_file: str | None = None
+        self._coffee_photo = None
 
         default_out = Path.home() / "Downloads" / "视频号下载"
         self.out_var = tk.StringVar(value=str(default_out))
         self.h265_var = tk.BooleanVar(value=False)
         self.status_var = tk.StringVar(value="把微信里的分享链接粘贴过来，点绿色按钮即可。")
-        self.license_var = tk.StringVar(value="")
 
         self._build_style()
         self._build_ui()
-        self._apply_license_ui_visibility()
-        self.after(200, self._startup_license_check)
 
     def _build_style(self) -> None:
         style = ttk.Style(self)
@@ -88,35 +72,21 @@ class App(tk.Tk):
         style.configure("Muted.TLabel", background=CARD, foreground=MUTED, font=("Microsoft YaHei UI", 9))
 
     def _build_ui(self) -> None:
-        # —— 显著品牌条 ——
         brand = tk.Frame(self, bg=BRAND_BG)
         brand.pack(fill="x")
-        tk.Label(
-            brand,
-            text=BRAND,
-            bg=BRAND_BG,
-            fg=GOLD,
-            font=("Microsoft YaHei UI", 16, "bold"),
-        ).pack(pady=(12, 2))
-        tk.Label(
-            brand,
-            text="视频号一键下载",
-            bg=BRAND_BG,
-            fg=BRAND_FG,
-            font=("Microsoft YaHei UI", 10),
-        ).pack(pady=(0, 12))
+        tk.Label(brand, text=BRAND, bg=BRAND_BG, fg=GOLD, font=("Microsoft YaHei UI", 16, "bold")).pack(pady=(12, 2))
+        tk.Label(brand, text="视频号一键下载 · 开源免费", bg=BRAND_BG, fg=BRAND_FG, font=("Microsoft YaHei UI", 10)).pack(
+            pady=(0, 12)
+        )
 
-        pad = {"padx": 24, "pady": 8}
         head = ttk.Frame(self, style="TFrame")
-        head.pack(fill="x", **pad)
+        head.pack(fill="x", padx=24, pady=8)
         ttk.Label(head, text="一键下载视频号", style="Title.TLabel").pack(anchor="w")
         ttk.Label(
             head,
             text="小白三步：复制链接 → 粘贴到这里 → 点下载。不用命令行。",
             style="Sub.TLabel",
         ).pack(anchor="w", pady=(4, 0))
-        self.license_label = ttk.Label(head, textvariable=self.license_var, style="Sub.TLabel")
-        # 免费期内不显示；过期后由 _apply_license_ui_visibility 打开
 
         card = tk.Frame(self, bg=CARD, highlightbackground=BORDER, highlightthickness=1, bd=0)
         card.pack(fill="both", expand=True, padx=24, pady=8)
@@ -140,8 +110,7 @@ class App(tk.Tk):
         btn_row.pack(fill="x", padx=16, pady=8)
         ttk.Button(btn_row, text="从剪贴板粘贴", command=self.paste_clipboard).pack(side="left")
         ttk.Button(btn_row, text="清空", command=lambda: self.text.delete("1.0", "end")).pack(side="left", padx=8)
-        self.btn_license = ttk.Button(btn_row, text="输入维护码", command=self.prompt_license)
-        self.btn_pricing = ttk.Button(btn_row, text="赞助 / 联系", command=self.show_pricing)
+        ttk.Button(btn_row, text="请强哥喝咖啡", command=self.show_coffee).pack(side="left", padx=8)
 
         ttk.Label(card, text="② 选择保存文件夹", style="Card.TLabel").pack(anchor="w", padx=16, pady=(8, 6))
         path_row = ttk.Frame(card, style="Card.TFrame")
@@ -172,15 +141,7 @@ class App(tk.Tk):
         self.download_btn.pack(fill="x", padx=16, pady=(4, 8))
 
         ttk.Label(card, text="运行状态", style="Muted.TLabel").pack(anchor="w", padx=16, pady=(8, 4))
-        self.log = tk.Text(
-            card,
-            height=7,
-            wrap="word",
-            font=("Consolas", 10),
-            bg="#F3F7F4",
-            relief="flat",
-            state="disabled",
-        )
+        self.log = tk.Text(card, height=7, wrap="word", font=("Consolas", 10), bg="#F3F7F4", relief="flat", state="disabled")
         self.log.pack(fill="both", expand=True, padx=16, pady=(0, 8))
 
         foot = ttk.Frame(self, style="TFrame")
@@ -189,143 +150,54 @@ class App(tk.Tk):
         ttk.Button(foot, text="打开刚下的视频", command=self.open_last_file).pack(side="left", padx=8)
         ttk.Label(foot, textvariable=self.status_var, style="Sub.TLabel").pack(side="left", padx=12)
 
-        self.footer_var = tk.StringVar(value=BRAND_FULL)
         tk.Label(
             self,
-            textvariable=self.footer_var,
+            text=f"{BRAND_FULL}  |  开源免费  |  {CONTACT}",
             bg=BG,
             fg=MUTED,
             font=("Microsoft YaHei UI", 8),
         ).pack(fill="x", padx=24, pady=(0, 10))
 
-    def _apply_license_ui_visibility(self) -> None:
-        """免费期内隐藏一切授权相关展示；过期后再显示。"""
-        if is_in_free_period():
-            self.license_var.set("")
-            self.license_label.pack_forget()
-            self.btn_license.pack_forget()
-            self.btn_pricing.pack_forget()
-            self.footer_var.set(BRAND_FULL)
-            return
+    def show_coffee(self) -> None:
+        """Voluntary tip dialog — not a paywall."""
+        win = tk.Toplevel(self)
+        win.title(f"请喝咖啡 · {BRAND}")
+        win.configure(bg=BG)
+        win.geometry("400x620")
+        win.transient(self)
 
-        st = check_entitlement()
-        self.license_var.set(f"授权状态：{st.message}")
-        self.license_label.pack(anchor="w", pady=(6, 0))
-        self.btn_license.pack(side="left", padx=8)
-        self.btn_pricing.pack(side="left")
-        self.footer_var.set(
-            f"{BRAND_FULL}  |  赞助维护约¥{PRICE_MONTH}/月或¥{PRICE_LIFE}买断  |  QQ:{QQ}"
+        tk.Label(win, text=COFFEE_HINT, bg=BG, fg=TEXT, font=("Microsoft YaHei UI", 12, "bold")).pack(pady=(16, 6))
+        tk.Label(win, text=f"QQ：{QQ}", bg=BG, fg=GREEN_DARK, font=("Microsoft YaHei UI", 12, "bold")).pack()
+        tk.Label(win, text="微信扫码也可以（自愿，谢谢）", bg=BG, fg=MUTED, font=("Microsoft YaHei UI", 9)).pack(
+            pady=(8, 4)
         )
 
-    def refresh_license_banner(self) -> None:
-        self._apply_license_ui_visibility()
-
-    def _startup_license_check(self) -> None:
-        # 免费期内不弹授权窗
-        if is_in_free_period():
-            return
-        st = check_entitlement()
-        if not st.ok:
-            self.show_pricing(force=True)
-
-    def show_pricing(self, force: bool = False) -> None:
-        """Show pay QR + prices. Only meaningful after free period (or force)."""
-        if is_in_free_period() and not force:
-            return
-        win = tk.Toplevel(self)
-        win.title(f"赞助维护 · {BRAND}")
-        win.configure(bg=BG)
-        win.geometry("420x680")
-        win.transient(self)
-        win.grab_set()
-
-        tk.Label(win, text=BRAND, bg=BG, fg=TEXT, font=("Microsoft YaHei UI", 14, "bold")).pack(pady=(16, 4))
-        tk.Label(
-            win,
-            text="官方界面版维护赞助（源码仍开源）",
-            bg=BG,
-            fg=MUTED,
-            font=("Microsoft YaHei UI", 10),
-        ).pack()
-        tk.Label(
-            win,
-            text=f"约 ¥{PRICE_MONTH}/月　　或　　买断约 ¥{PRICE_LIFE}",
-            bg=BG,
-            fg=GREEN_DARK,
-            font=("Microsoft YaHei UI", 12, "bold"),
-        ).pack(pady=(8, 4))
-        tk.Label(
-            win,
-            text=f"付款后加 QQ {QQ} 发截图领维护码",
-            bg=BG,
-            fg=TEXT,
-            font=("Microsoft YaHei UI", 11, "bold"),
-        ).pack(pady=(4, 4))
-        tk.Label(win, text=PAY_HINT, bg=BG, fg=MUTED, font=("Microsoft YaHei UI", 10)).pack(pady=(4, 4))
-
         qr = pay_qr_path()
-        self._pay_photo = None
+        self._coffee_photo = None
         if qr is not None:
             try:
                 from PIL import Image, ImageTk
 
                 img = Image.open(qr)
-                img.thumbnail((320, 480), Image.Resampling.LANCZOS)
-                self._pay_photo = ImageTk.PhotoImage(img)
-                tk.Label(win, image=self._pay_photo, bg=BG).pack(pady=8)
+                img.thumbnail((300, 420), Image.Resampling.LANCZOS)
+                self._coffee_photo = ImageTk.PhotoImage(img)
+                tk.Label(win, image=self._coffee_photo, bg=BG).pack(pady=8)
             except Exception:
                 try:
-                    self._pay_photo = tk.PhotoImage(file=str(qr))
-                    # scale down if huge
-                    tk.Label(win, image=self._pay_photo, bg=BG).pack(pady=8)
+                    self._coffee_photo = tk.PhotoImage(file=str(qr))
+                    tk.Label(win, image=self._coffee_photo, bg=BG).pack(pady=8)
                 except tk.TclError:
-                    tk.Label(win, text="（收款码加载失败，请联系强哥）", bg=BG, fg="red").pack()
-        else:
-            tk.Label(win, text="（未找到收款码图片）", bg=BG, fg="red").pack()
+                    pass
 
         tk.Label(
             win,
-            text=CONTACT,
+            text="不影响使用：不赞助也能一直下载。\n打包与长期维护，等 Star 多了再单独说。",
             bg=BG,
-            fg=TEXT,
+            fg=MUTED,
             font=("Microsoft YaHei UI", 9),
-            wraplength=360,
             justify="center",
-        ).pack(pady=(4, 12))
-
-        row = ttk.Frame(win)
-        row.pack(pady=8)
-        ttk.Button(row, text="我已赞助，输入维护码", command=lambda: (win.destroy(), self.prompt_license())).pack(
-            side="left", padx=6
-        )
-        ttk.Button(row, text="关闭", command=win.destroy).pack(side="left", padx=6)
-
-    def prompt_license(self) -> None:
-        raw = simpledialog.askstring(
-            "输入维护码",
-            f"{BRAND}\n\n约 ¥{PRICE_MONTH}/月 或买断约 ¥{PRICE_LIFE}\nQQ：{QQ}\n{CONTACT}\n\n请粘贴维护码：",
-            parent=self,
-        )
-        if not raw:
-            return
-        st = save_license(raw)
-        if st.ok:
-            messagebox.showinfo("授权成功", st.message)
-            self._log(f"授权成功：{st.message}")
-        else:
-            messagebox.showerror("授权失败", st.message)
-            self._log(f"授权失败：{st.message}")
-        self.refresh_license_banner()
-
-    def ensure_can_run(self) -> bool:
-        if is_in_free_period():
-            return True
-        st = check_entitlement()
-        self.refresh_license_banner()
-        if st.ok:
-            return True
-        self.show_pricing(force=True)
-        return check_entitlement().ok
+        ).pack(pady=8)
+        ttk.Button(win, text="关闭", command=win.destroy).pack(pady=12)
 
     def paste_clipboard(self) -> None:
         try:
@@ -351,8 +223,6 @@ class App(tk.Tk):
 
     def start_download(self) -> None:
         if self._busy:
-            return
-        if not self.ensure_can_run():
             return
         raw = self.text.get("1.0", "end").strip()
         if not raw or raw.startswith("例如："):

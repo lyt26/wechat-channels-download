@@ -34,6 +34,8 @@
    **`WeChatChannelsDownloader-Windows.exe`** 다운로드
 2. 더블클릭 → 링크 붙여넣기 → 초록 버튼
 
+연락 QQ **3031635159**（커피 한 잔 환영·선택）. 무료, 라이선스 잠금 없음. [docs/SUPPORT.md](docs/SUPPORT.md)
+
 소스 실행:
 
 ```bash
