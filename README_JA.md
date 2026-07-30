@@ -28,6 +28,20 @@
 
 ---
 
+## 🟢 初心者向け：Windows アプリ
+
+1. [Releases](https://github.com/lyt26/wechat-channels-download/releases/latest) から  
+   **`WeChatChannelsDownloader-Windows.exe`** をダウンロード
+2. ダブルクリック → リンクを貼る → 緑のボタン
+
+ソースから起動：
+
+```bash
+python gui/app.py
+```
+
+---
+
 ## なぜ Star する価値があるか
 
 | 困りごと | これまで | これから |

@@ -8,3 +8,7 @@ venv/
 *.mp4
 .idea/
 .vscode/
+build/
+dist/
+*.spec
+release_assets/

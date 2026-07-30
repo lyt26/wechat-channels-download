@@ -28,6 +28,20 @@
 
 ---
 
+## 🟢 Easiest for beginners: Windows GUI
+
+1. Open the [latest Release](https://github.com/lyt26/wechat-channels-download/releases/latest)
+2. Download **`WeChatChannelsDownloader-Windows.exe`**
+3. Double-click → paste the share link → hit the green button
+
+Or from source:
+
+```bash
+python gui/app.py
+```
+
+---
+
 ## Why star this?
 
 | Pain | Before | Now |

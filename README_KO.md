@@ -28,6 +28,20 @@
 
 ---
 
+## 🟢 초보 추천: Windows 화면 버전
+
+1. [Releases](https://github.com/lyt26/wechat-channels-download/releases/latest) 에서  
+   **`WeChatChannelsDownloader-Windows.exe`** 다운로드
+2. 더블클릭 → 링크 붙여넣기 → 초록 버튼
+
+소스 실행:
+
+```bash
+python gui/app.py
+```
+
+---
+
 ## 왜 Star 할까요?
 
 | 문제 | 예전 | 지금 |

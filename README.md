@@ -31,20 +31,43 @@
 
 ---
 
+## 🟢 小白最推荐：下载带界面的 Windows 版
+
+> **不会命令行？直接双击就行。**
+
+1. 打开 [Releases 发布页](https://github.com/lyt26/wechat-channels-download/releases/latest)
+2. 下载 **`WeChatChannelsDownloader-Windows.exe`**（约 11 MB）
+3. 双击运行 → 粘贴微信分享链接 → 点绿色「开始下载」
+4. 视频默认保存在：`我的文档/Downloads/视频号下载`
+
+<p align="center">
+  <a href="https://github.com/lyt26/wechat-channels-download/releases/latest"><img alt="Download Windows GUI" src="https://img.shields.io/badge/⬇%20下载%20Windows%20界面版-v1.0.0-07C160?style=for-the-badge" /></a>
+</p>
+
+若 Windows 提示「未知发布者」，点 **更多信息 → 仍要运行**（开源软件常见提示，可先杀毒扫描再放心用）。
+
+已安装 Python 的用户，也可以双击仓库里的 `启动界面版.bat`，或运行：
+
+```bash
+python gui/app.py
+```
+
+---
+
 ## 为什么值得 Star？
 
 | 痛点 | 以前 | 现在 |
 |------|------|------|
-| 想保存视频号素材 | 只能手机里转存、录屏糊成一片 | **一行命令 → 清晰 MP4** |
+| 想保存视频号素材 | 只能手机里转存、录屏糊成一片 | **界面点一下 / 一行命令 → 清晰 MP4** |
 | `yt-dlp` 行不行？ | **不行**，直接报不支持 | 本工具专门打通视频号分享链 |
-| 要不要会编程？ | 各种抓包、证书劝退 | **复制链接 → 回车** 就行 |
+| 要不要会编程？ | 各种抓包、证书劝退 | **复制链接 → 粘贴 → 下载** |
 
 > 如果你也讨厌「只能微信里看、电脑下不下来」——  
 > **点一下右上角 Star，让更多人找到这个工具。** ⭐
 
 ---
 
-## 🚀 30 秒上手（小白版）
+## 🚀 30 秒上手（命令行版）
 
 <p align="center">
   <img src="docs/assets/steps-flow.png" width="900" alt="三步流程图" />
@@ -184,10 +207,11 @@ python scripts/download_sph.py "https://weixin.qq.com/sph/xxxx" -o ./downloads -
 
 ## 🗺 路线图（一起打造成爆款）
 
-- [ ] 图形界面（双击即用，更适合小白）
+- [x] 图形界面（双击即用，更适合小白）— **v1.0.0 Windows 已发布**
 - [ ] 批量下载多个链接
 - [ ] 可选封面一并保存
-- [ ] GitHub Action 示例
+- [ ] macOS / Linux 打包
+- [ ] GitHub Action 自动发版
 - [ ] 更多语言文档
 
 有想法请开 Issue；愿意贡献请提 PR。  
