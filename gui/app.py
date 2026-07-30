@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Beginner-friendly GUI for WeChat Channels (视频号) download."""
+"""Beginner-friendly GUI for WeChat Channels (视频号) download.
+
+Brand: 上海三松强哥出品
+"""
 
 from __future__ import annotations
 
@@ -10,7 +13,7 @@ import threading
 import tkinter as tk
 import urllib.error
 from pathlib import Path
-from tkinter import filedialog, messagebox, ttk
+from tkinter import filedialog, messagebox, simpledialog, ttk
 
 # Allow running from repo root / PyInstaller bundle
 ROOT = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parents[1]))
@@ -20,6 +23,17 @@ REPO = Path(__file__).resolve().parents[1] if not getattr(sys, "frozen", False) 
 if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
+from license_gate import (  # noqa: E402
+    BRAND,
+    BRAND_FULL,
+    CONTACT,
+    FREE_UNTIL,
+    PRICE_LIFE,
+    PRICE_MONTH,
+    check_entitlement,
+    pricing_text,
+    save_license,
+)
 from sph_core import download_share  # noqa: E402
 
 GREEN = "#07C160"
@@ -29,6 +43,9 @@ CARD = "#FFFFFF"
 TEXT = "#1F2A24"
 MUTED = "#6B7C72"
 BORDER = "#D7E8DD"
+BRAND_BG = "#0B3D2E"
+BRAND_FG = "#E8FFF3"
+GOLD = "#F5C542"
 
 
 class App(tk.Tk):
@@ -36,9 +53,9 @@ class App(tk.Tk):
 
     def __init__(self) -> None:
         super().__init__()
-        self.title("视频号下载器 · WeChat Channels Downloader")
-        self.geometry("720x560")
-        self.minsize(640, 520)
+        self.title(f"视频号下载器 · {BRAND}")
+        self.geometry("760x640")
+        self.minsize(680, 580)
         self.configure(bg=BG)
         self._busy = False
         self._last_file: str | None = None
@@ -47,9 +64,12 @@ class App(tk.Tk):
         self.out_var = tk.StringVar(value=str(default_out))
         self.h265_var = tk.BooleanVar(value=False)
         self.status_var = tk.StringVar(value="把微信里的分享链接粘贴过来，点绿色按钮即可。")
+        self.license_var = tk.StringVar(value="")
 
         self._build_style()
         self._build_ui()
+        self.refresh_license_banner()
+        self.after(200, self._startup_license_check)
 
     def _build_style(self) -> None:
         style = ttk.Style(self)
@@ -63,14 +83,26 @@ class App(tk.Tk):
         style.configure("Sub.TLabel", background=BG, foreground=MUTED, font=("Microsoft YaHei UI", 10))
         style.configure("Card.TLabel", background=CARD, foreground=TEXT, font=("Microsoft YaHei UI", 10))
         style.configure("Muted.TLabel", background=CARD, foreground=MUTED, font=("Microsoft YaHei UI", 9))
-        style.configure("Accent.TButton", font=("Microsoft YaHei UI", 12, "bold"), padding=10)
-        style.map(
-            "Accent.TButton",
-            background=[("!disabled", GREEN), ("pressed", GREEN_DARK), ("active", GREEN_DARK)],
-            foreground=[("!disabled", "#FFFFFF")],
-        )
 
     def _build_ui(self) -> None:
+        # —— 显著品牌条 ——
+        brand = tk.Frame(self, bg=BRAND_BG)
+        brand.pack(fill="x")
+        tk.Label(
+            brand,
+            text=BRAND,
+            bg=BRAND_BG,
+            fg=GOLD,
+            font=("Microsoft YaHei UI", 16, "bold"),
+        ).pack(pady=(12, 2))
+        tk.Label(
+            brand,
+            text="视频号一键下载 · 正版授权由强哥签发",
+            bg=BRAND_BG,
+            fg=BRAND_FG,
+            font=("Microsoft YaHei UI", 10),
+        ).pack(pady=(0, 12))
+
         pad = {"padx": 24, "pady": 8}
         head = ttk.Frame(self, style="TFrame")
         head.pack(fill="x", **pad)
@@ -80,6 +112,7 @@ class App(tk.Tk):
             text="小白三步：复制链接 → 粘贴到这里 → 点下载。不用命令行。",
             style="Sub.TLabel",
         ).pack(anchor="w", pady=(4, 0))
+        ttk.Label(head, textvariable=self.license_var, style="Sub.TLabel").pack(anchor="w", pady=(6, 0))
 
         card = tk.Frame(self, bg=CARD, highlightbackground=BORDER, highlightthickness=1, bd=0)
         card.pack(fill="both", expand=True, padx=24, pady=8)
@@ -87,7 +120,7 @@ class App(tk.Tk):
         ttk.Label(card, text="① 粘贴分享链接或整段微信文案", style="Card.TLabel").pack(anchor="w", padx=16, pady=(16, 6))
         self.text = tk.Text(
             card,
-            height=6,
+            height=5,
             wrap="word",
             font=("Microsoft YaHei UI", 11),
             relief="solid",
@@ -103,6 +136,8 @@ class App(tk.Tk):
         btn_row.pack(fill="x", padx=16, pady=8)
         ttk.Button(btn_row, text="从剪贴板粘贴", command=self.paste_clipboard).pack(side="left")
         ttk.Button(btn_row, text="清空", command=lambda: self.text.delete("1.0", "end")).pack(side="left", padx=8)
+        ttk.Button(btn_row, text="输入授权码", command=self.prompt_license).pack(side="left", padx=8)
+        ttk.Button(btn_row, text="价格说明", command=self.show_pricing).pack(side="left")
 
         ttk.Label(card, text="② 选择保存文件夹", style="Card.TLabel").pack(anchor="w", padx=16, pady=(8, 6))
         path_row = ttk.Frame(card, style="Card.TFrame")
@@ -135,7 +170,7 @@ class App(tk.Tk):
         ttk.Label(card, text="运行状态", style="Muted.TLabel").pack(anchor="w", padx=16, pady=(8, 4))
         self.log = tk.Text(
             card,
-            height=8,
+            height=7,
             wrap="word",
             font=("Consolas", 10),
             bg="#F3F7F4",
@@ -145,10 +180,57 @@ class App(tk.Tk):
         self.log.pack(fill="both", expand=True, padx=16, pady=(0, 8))
 
         foot = ttk.Frame(self, style="TFrame")
-        foot.pack(fill="x", padx=24, pady=(0, 16))
+        foot.pack(fill="x", padx=24, pady=(0, 8))
         ttk.Button(foot, text="打开保存文件夹", command=self.open_folder).pack(side="left")
         ttk.Button(foot, text="打开刚下的视频", command=self.open_last_file).pack(side="left", padx=8)
         ttk.Label(foot, textvariable=self.status_var, style="Sub.TLabel").pack(side="left", padx=12)
+
+        tk.Label(
+            self,
+            text=f"{BRAND_FULL}  |  免费至 {FREE_UNTIL.isoformat()}  |  之后月付¥{PRICE_MONTH} / 买断¥{PRICE_LIFE}  |  {CONTACT}",
+            bg=BG,
+            fg=MUTED,
+            font=("Microsoft YaHei UI", 8),
+        ).pack(fill="x", padx=24, pady=(0, 10))
+
+    def refresh_license_banner(self) -> None:
+        st = check_entitlement()
+        self.license_var.set(f"授权状态：{st.message}")
+
+    def _startup_license_check(self) -> None:
+        st = check_entitlement()
+        if not st.ok:
+            messagebox.showwarning("需要授权", st.message)
+            self.prompt_license()
+
+    def show_pricing(self) -> None:
+        messagebox.showinfo("授权价格", pricing_text())
+
+    def prompt_license(self) -> None:
+        raw = simpledialog.askstring(
+            "输入授权码",
+            f"{BRAND}\n\n月付 ¥{PRICE_MONTH} / 买断 ¥{PRICE_LIFE}\n{CONTACT}\n\n请粘贴授权码：",
+            parent=self,
+        )
+        if not raw:
+            return
+        st = save_license(raw)
+        if st.ok:
+            messagebox.showinfo("授权成功", st.message)
+            self._log(f"授权成功：{st.message}")
+        else:
+            messagebox.showerror("授权失败", st.message)
+            self._log(f"授权失败：{st.message}")
+        self.refresh_license_banner()
+
+    def ensure_can_run(self) -> bool:
+        st = check_entitlement()
+        self.refresh_license_banner()
+        if st.ok:
+            return True
+        messagebox.showwarning("需要授权", st.message)
+        self.prompt_license()
+        return check_entitlement().ok
 
     def paste_clipboard(self) -> None:
         try:
@@ -175,6 +257,8 @@ class App(tk.Tk):
     def start_download(self) -> None:
         if self._busy:
             return
+        if not self.ensure_can_run():
+            return
         raw = self.text.get("1.0", "end").strip()
         if not raw or raw.startswith("例如："):
             messagebox.showinfo("提示", "请先粘贴微信视频号分享链接。")
@@ -187,6 +271,7 @@ class App(tk.Tk):
         self._busy = True
         self.download_btn.configure(state="disabled", text="下载中，请稍候…", bg="#A0D9B8")
         self._log("—— 开始任务 ——")
+        self._log(f"出品：{BRAND}")
 
         def worker() -> None:
             try:
@@ -203,10 +288,10 @@ class App(tk.Tk):
                     self._log(f"作者：{result['author']}")
                     self._log(f"文件：{result['path']}")
                     self._log(f"大小：{size_mb:.2f} MB")
-                    self._log("—— 完成 ——")
+                    self._log(f"—— 完成（{BRAND}）——")
                     messagebox.showinfo(
                         "下载成功",
-                        f"作者：{result['author']}\n大小：{size_mb:.2f} MB\n\n已保存到：\n{result['path']}",
+                        f"{BRAND}\n\n作者：{result['author']}\n大小：{size_mb:.2f} MB\n\n已保存到：\n{result['path']}",
                     )
 
                 self.after(0, ok)

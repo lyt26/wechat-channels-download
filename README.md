@@ -5,7 +5,8 @@
 </p>
 
 <p align="center">
-  <b>一键把视频号变成电脑里的 MP4</b><br/>
+  <b>上海三松强哥出品</b><br/>
+  一键把视频号变成电脑里的 MP4<br/>
   Paste a <code>weixin.qq.com/sph/...</code> link → get an <code>.mp4</code> file.<br/>
   共有リンクを貼るだけ。誰でも使える。
 </p>
@@ -41,10 +42,16 @@
 4. 视频默认保存在：`我的文档/Downloads/视频号下载`
 
 <p align="center">
-  <a href="https://github.com/lyt26/wechat-channels-download/releases/latest"><img alt="Download Windows GUI" src="https://img.shields.io/badge/⬇%20下载%20Windows%20界面版-v1.0.0-07C160?style=for-the-badge" /></a>
+  <a href="https://github.com/lyt26/wechat-channels-download/releases/latest"><img alt="Download Windows GUI" src="https://img.shields.io/badge/⬇%20下载%20Windows%20界面版-v1.1.0-07C160?style=for-the-badge" /></a>
 </p>
 
 若 Windows 提示「未知发布者」，点 **更多信息 → 仍要运行**（开源软件常见提示，可先杀毒扫描再放心用）。
+
+**授权说明（重要）**  
+- **2027-12-31 前**：免费使用  
+- **之后**：需授权码才能继续用（月付 **¥5** / 月，或买断 **¥15**）  
+- 购买请联系：**上海三松强哥**  
+- 界面内可点「输入授权码 / 价格说明」
 
 已安装 Python 的用户，也可以双击仓库里的 `启动界面版.bat`，或运行：
 
