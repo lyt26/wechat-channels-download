@@ -37,8 +37,10 @@
 > **不会命令行？直接双击就行。**
 
 1. 打开 [Releases 发布页](https://github.com/lyt26/wechat-channels-download/releases/latest)
-2. 下载 **`ShipinhaoDownloader-Xiaobai.exe`**（小白版）或 `WeChatChannelsDownloader-Windows-v1.2.0.exe`
-3. 双击运行 → 粘贴微信分享链接 → 点绿色「开始下载」
+2. 下载其一：
+   - **`ShipinhaoDownloader-Xiaobai-Setup.exe`**（安装版，有安装向导，推荐小白）
+   - 或 **`ShipinhaoDownloader-Xiaobai.exe`**（便携版，双击即用）
+3. 安装/打开后 → 粘贴微信分享链接 → 点绿色「开始下载」
 4. 视频默认保存在：`下载/视频号下载`
 
 <p align="center">
@@ -53,9 +55,9 @@
 python gui/app.py
 ```
 
-> **上海三松强哥出品** · 源码 MIT 开源 · **现在完全免费使用**  
-> 觉得有用请 Star ⭐；想请强哥喝咖啡 / 联系加 **QQ：3031635159**  
-> 详见 [`docs/SUPPORT.md`](docs/SUPPORT.md)（无授权、无到期锁；打包维护等星多了再说）
+> **上海三松强哥出品** · 源码 MIT 开源  
+> 觉得有用请 Star ⭐；请喝咖啡 / 联系加 **QQ：3031635159**  
+> 详见 [`docs/SUPPORT.md`](docs/SUPPORT.md)
 
 ---
 
@@ -205,8 +207,15 @@ python scripts/download_sph.py "https://weixin.qq.com/sph/xxxx" -o ./downloads -
 **Q：可以商用批量扒别人视频吗？**  
 不可以。本工具面向个人合法备份 / 已授权素材。批量搬运他人作品可能侵犯著作权，也违反平台规则。定制开发边界见 [`docs/SUPPORT.md`](docs/SUPPORT.md)。
 
+**Q：哪些链接能下？通用吗？**  
+能。只要是微信里复制出来的视频号分享链（一般是 `https://weixin.qq.com/sph/xxxxx`），换哪个作者、哪个视频都可以用同一套流程。链接过期或仅自己可见时会失败，重新分享复制即可。直播、图文等非视频内容不支持。
+
 **Q：想请喝咖啡或联系找谁？**  
-加 QQ **3031635159**。自愿请咖啡即可，不影响使用。见 [`docs/SUPPORT.md`](docs/SUPPORT.md)。
+加 QQ **3031635159**，或直接看本页最下方收款码。见 [`docs/SUPPORT.md`](docs/SUPPORT.md)。
+
+**Q：exe 和安装版有什么区别？**  
+- **Setup.exe（安装版）**：有安装向导，装到开始菜单/桌面，可在「应用和功能」里卸载（推荐小白）  
+- **exe（便携版）**：下载后双击就能用，不用安装  
 
 **Q：解析服务挂了怎么办？**  
 可用 [在线解析页](https://sph.litao.workers.dev/) 或 PC 微信插件方案（见 Skill 文档回退流程）。
@@ -216,10 +225,10 @@ python scripts/download_sph.py "https://weixin.qq.com/sph/xxxx" -o ./downloads -
 ## 🗺 路线图（一起打造成爆款）
 
 - [x] 图形界面（双击即用）  
+- [x] Windows 安装包（Setup 安装向导）  
 - [ ] 批量下载多个链接  
 - [ ] 可选封面一并保存  
 - [ ] macOS / Linux 打包  
-- [ ] Star 多了再谈：官方打包与长期维护说明  
 - [ ] 更多语言文档
 
 有想法请开 Issue；愿意贡献请提 PR。  
@@ -240,7 +249,16 @@ MIT — 自由使用，记得给仓库一颗 Star，这是对开源作者最好�
 
 ---
 
+## ☕ 请强哥喝杯咖啡
+
+如果这个工具帮你省了时间，欢迎请强哥喝杯咖啡（**自愿**）。  
+也可加 QQ **3031635159** 留言。点 Star ⭐ 同样是很大的支持。
+
 <p align="center">
-  <b>如果这个工具帮你省下了时间，请 Star ⭐ 让它被更多人看见。</b><br/>
+  <img src="docs/assets/wechat-pay-qr.png" width="360" alt="请强哥喝咖啡 · 微信支付" />
+</p>
+
+<p align="center">
+  <b>推荐使用微信支付 · QQ：3031635159</b><br/>
   <a href="https://github.com/lyt26/wechat-channels-download">https://github.com/lyt26/wechat-channels-download</a>
 </p>

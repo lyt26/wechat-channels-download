@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
-"""Beginner-friendly GUI for WeChat Channels (视频号) download.
-
-Brand: 上海三松强哥出品 — no license gate; optional「请喝咖啡」.
-"""
+"""Brand: 上海三松强哥出品 · optional「请喝咖啡」."""
 
 from __future__ import annotations
 
@@ -159,7 +156,7 @@ class App(tk.Tk):
         ).pack(fill="x", padx=24, pady=(0, 10))
 
     def show_coffee(self) -> None:
-        """Voluntary tip dialog — not a paywall."""
+        """Show voluntary tip QR / QQ."""
         win = tk.Toplevel(self)
         win.title(f"请喝咖啡 · {BRAND}")
         win.configure(bg=BG)
@@ -191,7 +188,7 @@ class App(tk.Tk):
 
         tk.Label(
             win,
-            text="不影响使用：不赞助也能一直下载。\n打包与长期维护，等 Star 多了再单独说。",
+            text="扫码或加 QQ 均可。点 Star 也是很大的支持。",
             bg=BG,
             fg=MUTED,
             font=("Microsoft YaHei UI", 9),

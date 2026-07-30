@@ -15,4 +15,4 @@ pyinstaller --noconfirm --clean --windowed --onefile `
 ```
 
 Output: `dist/WeChatChannelsDownloader.exe`  
-（二维码仅用于「请喝咖啡」自愿打赏，无授权门禁。）
+二维码用于「请喝咖啡」自愿打赏。

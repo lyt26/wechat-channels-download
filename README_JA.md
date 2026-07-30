@@ -34,7 +34,7 @@
    **`WeChatChannelsDownloader-Windows.exe`** をダウンロード
 2. ダブルクリック → リンクを貼る → 緑のボタン
 
-連絡先 QQ **3031635159**（コーヒーおごり歓迎・任意）。無料・ライセンス無し。詳しくは [docs/SUPPORT.md](docs/SUPPORT.md)。
+連絡先 QQ **3031635159**（コーヒーおごり歓迎）。詳しくは [docs/SUPPORT.md](docs/SUPPORT.md)。
 
 ソースから起動：
 

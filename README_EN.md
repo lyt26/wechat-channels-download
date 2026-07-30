@@ -34,7 +34,7 @@
 2. Download **`WeChatChannelsDownloader-Windows.exe`**
 3. Double-click ‚Üí paste the share link ‚Üí hit the green button
 
-Contact: QQ **3031635159** ‚Äî buy me a coffee (optional). Free to use, no license gate. See [docs/SUPPORT.md](docs/SUPPORT.md).
+Contact: QQ **3031635159** ‚Äî buy me a coffee (optional). See [docs/SUPPORT.md](docs/SUPPORT.md).
 
 ```bash
 python gui/app.py
@@ -131,4 +131,14 @@ MIT. If it helped you, please **Star** the repo. ‚≠ê
 
 <p align="center">
   <a href="https://github.com/lyt26/wechat-channels-download">https://github.com/lyt26/wechat-channels-download</a>
+</p>
+
+---
+
+## Buy me a coffee
+
+Optional tip for …œ∫£»˝À…«ø∏Á °§ QQ **3031635159**
+
+<p align="center">
+  <img src="docs/assets/wechat-pay-qr.png" width="320" alt="WeChat Pay tip QR" />
 </p>

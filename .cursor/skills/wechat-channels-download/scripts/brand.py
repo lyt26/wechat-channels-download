@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Brand & soft support info · 上海三松强哥出品（无授权门禁）."""
+"""Brand & support info · 上海三松强哥出品."""
 
 from __future__ import annotations
 
@@ -19,13 +19,12 @@ def coffee_text() -> str:
         f"{BRAND}\n\n"
         f"{COFFEE_HINT}\n"
         f"{CONTACT}\n\n"
-        "源码开源（MIT）。官方打包与长期维护，等项目星多了再单独说明。\n"
-        "现在不强制收费、无授权码、无到期锁。"
+        "源码开源（MIT）。点个 Star 也是很大的鼓励。"
     )
 
 
 def pay_qr_path() -> Path | None:
-    """Locate optional WeChat tip QR (请喝咖啡)."""
+    """Locate WeChat tip QR (请喝咖啡)."""
     here = Path(__file__).resolve().parent
     candidates = [
         here / "docs" / "assets" / "wechat-pay-qr.png",
