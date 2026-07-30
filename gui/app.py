@@ -30,6 +30,7 @@ from license_gate import (  # noqa: E402
     PAY_HINT,
     PRICE_LIFE,
     PRICE_MONTH,
+    QQ,
     check_entitlement,
     is_in_free_period,
     pay_qr_path,
@@ -139,8 +140,8 @@ class App(tk.Tk):
         btn_row.pack(fill="x", padx=16, pady=8)
         ttk.Button(btn_row, text="从剪贴板粘贴", command=self.paste_clipboard).pack(side="left")
         ttk.Button(btn_row, text="清空", command=lambda: self.text.delete("1.0", "end")).pack(side="left", padx=8)
-        self.btn_license = ttk.Button(btn_row, text="输入授权码", command=self.prompt_license)
-        self.btn_pricing = ttk.Button(btn_row, text="价格说明", command=self.show_pricing)
+        self.btn_license = ttk.Button(btn_row, text="输入维护码", command=self.prompt_license)
+        self.btn_pricing = ttk.Button(btn_row, text="赞助 / 联系", command=self.show_pricing)
 
         ttk.Label(card, text="② 选择保存文件夹", style="Card.TLabel").pack(anchor="w", padx=16, pady=(8, 6))
         path_row = ttk.Frame(card, style="Card.TFrame")
@@ -213,7 +214,7 @@ class App(tk.Tk):
         self.btn_license.pack(side="left", padx=8)
         self.btn_pricing.pack(side="left")
         self.footer_var.set(
-            f"{BRAND_FULL}  |  月付¥{PRICE_MONTH} / 买断¥{PRICE_LIFE}  |  {CONTACT}"
+            f"{BRAND_FULL}  |  赞助维护约¥{PRICE_MONTH}/月或¥{PRICE_LIFE}买断  |  QQ:{QQ}"
         )
 
     def refresh_license_banner(self) -> None:
@@ -232,21 +233,35 @@ class App(tk.Tk):
         if is_in_free_period() and not force:
             return
         win = tk.Toplevel(self)
-        win.title(f"扫码付款 · {BRAND}")
+        win.title(f"赞助维护 · {BRAND}")
         win.configure(bg=BG)
-        win.geometry("420x640")
+        win.geometry("420x680")
         win.transient(self)
         win.grab_set()
 
         tk.Label(win, text=BRAND, bg=BG, fg=TEXT, font=("Microsoft YaHei UI", 14, "bold")).pack(pady=(16, 4))
         tk.Label(
             win,
-            text=f"月付 ¥{PRICE_MONTH} / 月　　买断 ¥{PRICE_LIFE}",
+            text="官方界面版维护赞助（源码仍开源）",
+            bg=BG,
+            fg=MUTED,
+            font=("Microsoft YaHei UI", 10),
+        ).pack()
+        tk.Label(
+            win,
+            text=f"约 ¥{PRICE_MONTH}/月　　或　　买断约 ¥{PRICE_LIFE}",
             bg=BG,
             fg=GREEN_DARK,
             font=("Microsoft YaHei UI", 12, "bold"),
-        ).pack()
-        tk.Label(win, text=PAY_HINT, bg=BG, fg=MUTED, font=("Microsoft YaHei UI", 10)).pack(pady=(8, 4))
+        ).pack(pady=(8, 4))
+        tk.Label(
+            win,
+            text=f"付款后加 QQ {QQ} 发截图领维护码",
+            bg=BG,
+            fg=TEXT,
+            font=("Microsoft YaHei UI", 11, "bold"),
+        ).pack(pady=(4, 4))
+        tk.Label(win, text=PAY_HINT, bg=BG, fg=MUTED, font=("Microsoft YaHei UI", 10)).pack(pady=(4, 4))
 
         qr = pay_qr_path()
         self._pay_photo = None
@@ -280,15 +295,15 @@ class App(tk.Tk):
 
         row = ttk.Frame(win)
         row.pack(pady=8)
-        ttk.Button(row, text="我已付款，输入授权码", command=lambda: (win.destroy(), self.prompt_license())).pack(
+        ttk.Button(row, text="我已赞助，输入维护码", command=lambda: (win.destroy(), self.prompt_license())).pack(
             side="left", padx=6
         )
         ttk.Button(row, text="关闭", command=win.destroy).pack(side="left", padx=6)
 
     def prompt_license(self) -> None:
         raw = simpledialog.askstring(
-            "输入授权码",
-            f"{BRAND}\n\n月付 ¥{PRICE_MONTH} / 买断 ¥{PRICE_LIFE}\n{CONTACT}\n\n请粘贴授权码：",
+            "输入维护码",
+            f"{BRAND}\n\n约 ¥{PRICE_MONTH}/月 或买断约 ¥{PRICE_LIFE}\nQQ：{QQ}\n{CONTACT}\n\n请粘贴维护码：",
             parent=self,
         )
         if not raw:

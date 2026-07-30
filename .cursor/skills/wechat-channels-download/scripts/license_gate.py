@@ -18,10 +18,12 @@ from pathlib import Path
 
 BRAND = "上海三松强哥出品"
 BRAND_FULL = "上海三松强哥出品 · 视频号下载器"
-CONTACT = "购买授权请联系：上海三松强哥"
+QQ = "3031635159"
+CONTACT = f"赞助/领维护码/定制请加 QQ：{QQ}（付款后发截图）"
 PRICE_MONTH = 5
 PRICE_LIFE = 15
 FREE_UNTIL = date(2027, 12, 31)
+PAY_HINT = "可用微信扫码赞助，或加 QQ 联系强哥（推荐微信支付）"
 
 # Signing secret for auth codes (casual piracy deterrent for ¥5/¥15 tools).
 _SECRET = b"SSQG-ShanghaiSanSong-QiangGe-SPH-License-v1"
@@ -122,6 +124,9 @@ def load_saved_license(today: date | None = None) -> LicenseStatus | None:
 
 def is_in_free_period(today: date | None = None) -> bool:
     """True when users may use the app without seeing/using auth UI."""
+    # Owner/debug: set SSQG_FORCE_PAY_UI=1 to preview pay/QR UI before free period ends.
+    if os.environ.get("SSQG_FORCE_PAY_UI") == "1":
+        return False
     today = today or date.today()
     return today <= FREE_UNTIL
 
@@ -138,21 +143,33 @@ def check_entitlement(today: date | None = None) -> LicenseStatus:
         return saved
 
     msg = (
-        f"免费期已结束（截止 {FREE_UNTIL.isoformat()}）。\n"
-        f"继续使用需授权码：月付 ¥{PRICE_MONTH} / 月，或买断 ¥{PRICE_LIFE}。\n"
+        f"官方界面版已进入维护赞助期（自 {FREE_UNTIL.isoformat()} 之后）。\n"
+        f"可赞助继续使用官方包：约 ¥{PRICE_MONTH}/月 或买断约 ¥{PRICE_LIFE}。\n"
         f"{CONTACT}"
     )
     return LicenseStatus(False, "locked", msg)
 
 
 def pricing_text() -> str:
-    """Human-readable pricing and contact for dialogs."""
+    """Human-readable sponsorship text for dialogs."""
     return (
         f"{BRAND}\n\n"
-        f"免费使用至：{FREE_UNTIL.isoformat()}\n"
-        f"之后价格：\n"
-        f"  · 月付 ¥{PRICE_MONTH} / 月\n"
-        f"  · 买断 ¥{PRICE_LIFE}（一次付清，永久）\n\n"
-        f"{CONTACT}\n"
-        f"付款后发送凭证，即可获得授权码。"
+        f"源码开源；官方界面版维护可自愿赞助。\n"
+        f"参考：月付约 ¥{PRICE_MONTH} / 月，买断约 ¥{PRICE_LIFE}。\n\n"
+        f"{PAY_HINT}\n"
+        f"{CONTACT}"
     )
+
+
+def pay_qr_path() -> Path | None:
+    """Locate bundled WeChat Pay QR image."""
+    here = Path(__file__).resolve().parent
+    candidates = [
+        here / "docs" / "assets" / "wechat-pay-qr.png",
+        Path(getattr(__import__("sys"), "_MEIPASS", here)) / "docs" / "assets" / "wechat-pay-qr.png",
+        here / "wechat-pay-qr.png",
+    ]
+    for p in candidates:
+        if p.is_file():
+            return p
+    return None

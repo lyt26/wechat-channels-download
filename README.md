@@ -42,7 +42,7 @@
 4. 视频默认保存在：`我的文档/Downloads/视频号下载`
 
 <p align="center">
-  <a href="https://github.com/lyt26/wechat-channels-download/releases/latest"><img alt="Download Windows GUI" src="https://img.shields.io/badge/⬇%20下载%20Windows%20界面版-v1.1.0-07C160?style=for-the-badge" /></a>
+  <a href="https://github.com/lyt26/wechat-channels-download/releases/latest"><img alt="Download Windows GUI" src="https://img.shields.io/badge/⬇%20下载%20Windows%20界面版-latest-07C160?style=for-the-badge" /></a>
 </p>
 
 若 Windows 提示「未知发布者」，点 **更多信息 → 仍要运行**（开源软件常见提示，可先杀毒扫描再放心用）。
@@ -53,7 +53,9 @@
 python gui/app.py
 ```
 
-> 出品：**上海三松强哥**。软件可正常使用到 2027-12-31；之后如需继续使用，软件会弹出微信支付收款码（月付 ¥5 / 买断 ¥15），付款后联系强哥领取授权码。发行方说明见 [`docs/HOW_TO_AUTHORIZE.md`](docs/HOW_TO_AUTHORIZE.md)。
+> **上海三松强哥出品** · 源码 MIT 开源。  
+> 觉得有用请 Star ⭐；赞助 / 定制 / 官方版维护请加 **QQ：3031635159**。  
+> 详见 [`docs/SUPPORT.md`](docs/SUPPORT.md)
 
 ---
 
@@ -201,7 +203,10 @@ python scripts/download_sph.py "https://weixin.qq.com/sph/xxxx" -o ./downloads -
 链接可能过期。回微信重新「分享 → 复制链接」，再跑一次。
 
 **Q：可以商用批量扒别人视频吗？**  
-本工具面向**个人合法备份 / 授权素材整理**。请遵守平台规则与版权；滥用风险自负。
+不可以。本工具面向个人合法备份 / 已授权素材。批量搬运他人作品可能侵犯著作权，也违反平台规则。定制开发边界见 [`docs/SUPPORT.md`](docs/SUPPORT.md)。
+
+**Q：想赞助或定制找谁？**  
+加 QQ **3031635159**（备注来意）。说明见 [`docs/SUPPORT.md`](docs/SUPPORT.md)。
 
 **Q：解析服务挂了怎么办？**  
 可用 [在线解析页](https://sph.litao.workers.dev/) 或 PC 微信插件方案（见 Skill 文档回退流程）。

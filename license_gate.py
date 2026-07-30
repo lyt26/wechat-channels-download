@@ -18,11 +18,12 @@ from pathlib import Path
 
 BRAND = "上海三松强哥出品"
 BRAND_FULL = "上海三松强哥出品 · 视频号下载器"
-CONTACT = "付款后把截图发给上海三松强哥，即可获得授权码"
+QQ = "3031635159"
+CONTACT = f"赞助/领维护码/定制请加 QQ：{QQ}（付款后发截图）"
 PRICE_MONTH = 5
 PRICE_LIFE = 15
 FREE_UNTIL = date(2027, 12, 31)
-PAY_HINT = "请用微信扫下方收款码付款（推荐微信支付）"
+PAY_HINT = "可用微信扫码赞助，或加 QQ 联系强哥（推荐微信支付）"
 
 # Signing secret for auth codes (casual piracy deterrent for ¥5/¥15 tools).
 _SECRET = b"SSQG-ShanghaiSanSong-QiangGe-SPH-License-v1"
@@ -142,21 +143,19 @@ def check_entitlement(today: date | None = None) -> LicenseStatus:
         return saved
 
     msg = (
-        f"免费期已结束（截止 {FREE_UNTIL.isoformat()}）。\n"
-        f"继续使用需授权码：月付 ¥{PRICE_MONTH} / 月，或买断 ¥{PRICE_LIFE}。\n"
+        f"官方界面版已进入维护赞助期（自 {FREE_UNTIL.isoformat()} 之后）。\n"
+        f"可赞助继续使用官方包：约 ¥{PRICE_MONTH}/月 或买断约 ¥{PRICE_LIFE}。\n"
         f"{CONTACT}"
     )
     return LicenseStatus(False, "locked", msg)
 
 
 def pricing_text() -> str:
-    """Human-readable pricing and contact for dialogs."""
+    """Human-readable sponsorship text for dialogs."""
     return (
         f"{BRAND}\n\n"
-        f"免费使用至：{FREE_UNTIL.isoformat()}\n"
-        f"之后价格：\n"
-        f"  · 月付 ¥{PRICE_MONTH} / 月\n"
-        f"  · 买断 ¥{PRICE_LIFE}（一次付清，永久）\n\n"
+        f"源码开源；官方界面版维护可自愿赞助。\n"
+        f"参考：月付约 ¥{PRICE_MONTH} / 月，买断约 ¥{PRICE_LIFE}。\n\n"
         f"{PAY_HINT}\n"
         f"{CONTACT}"
     )

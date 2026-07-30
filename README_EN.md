@@ -34,15 +34,7 @@
 2. Download **`WeChatChannelsDownloader-Windows.exe`**
 3. Double-click → paste the share link → hit the green button
 
-Or from source:
-
-```bash
-python gui/app.py
-```
-
----
-
-## Why star this?
+Contact / custom work: QQ **3031635159** (see [docs/SUPPORT.md](docs/SUPPORT.md)). Soft sponsorship for the official Windows build — source stays MIT.
 
 | Pain | Before | Now |
 |------|--------|-----|
