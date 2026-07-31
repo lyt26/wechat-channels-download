@@ -3,12 +3,14 @@
 ## 便携 exe
 
 ```powershell
-pip install pyinstaller
+pip install pyinstaller certifi
 pyinstaller --noconfirm --clean --windowed --onefile `
   --name "WeChatChannelsDownloader" `
   --paths . `
   --hidden-import sph_core `
   --hidden-import brand `
+  --hidden-import certifi `
+  --collect-all certifi `
   --collect-all PIL `
   --add-data "docs/assets/wechat-pay-qr.png;docs/assets" `
   gui/app.py
