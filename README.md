@@ -1,5 +1,8 @@
 # WeChat Channels Downloader / 微信视频号下载器
 
+> **独立开源项目**（与 Odoo 事务处理仓库无关）  
+> 本地路径示例：`g:\lyt\wechat-channels-download` · GitHub：https://github.com/lyt26/wechat-channels-download
+
 <p align="center">
   <img src="docs/assets/logo.png" width="120" alt="SPH Logo" />
 </p>
