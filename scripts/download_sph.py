@@ -17,6 +17,16 @@ from brand import BRAND, CONTACT, coffee_text
 from sph_core import download_share, extract_share_url, fetch_profile
 
 
+def _safe_print(msg: str, *, file=None) -> None:
+    """Print without crashing on Windows GBK consoles when text has emoji."""
+    target = file or sys.stdout
+    try:
+        print(msg, file=target)
+    except UnicodeEncodeError:
+        encoding = getattr(target, "encoding", None) or "utf-8"
+        print(msg.encode(encoding, errors="replace").decode(encoding, errors="replace"), file=target)
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=f"{BRAND} · 下载微信视频号分享链接对应的视频")
     parser.add_argument("url", nargs="?", help="分享链接或含链接的文案")
@@ -26,9 +36,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--coffee", action="store_true", help="显示「请喝咖啡」联系方式后退出")
     args = parser.parse_args(argv)
 
-    print(f"=== {BRAND} ===")
+    _safe_print(f"=== {BRAND} ===")
     if args.coffee:
-        print(coffee_text())
+        _safe_print(coffee_text())
         return 0
     if not args.url:
         parser.error("请提供分享链接，或使用 --coffee")
@@ -37,19 +47,19 @@ def main(argv: list[str] | None = None) -> int:
         if args.json:
             share_url = extract_share_url(args.url)
             profile = fetch_profile(share_url)
-            print(json.dumps(profile, ensure_ascii=False, indent=2), file=sys.stderr)
+            _safe_print(json.dumps(profile, ensure_ascii=False, indent=2), file=sys.stderr)
 
-        result = download_share(args.url, args.output_dir, prefer_h265=args.h265, on_progress=print)
+        result = download_share(args.url, args.output_dir, prefer_h265=args.h265, on_progress=_safe_print)
         size = result["size"]
-        print(f"作者: {result['author']}")
-        print(f"描述: {result['description'].strip()[:120]}")
-        print(f"文件: {result['path']}")
-        print(f"大小: {size} bytes ({size / 1024 / 1024:.2f} MB)")
-        print(f"出品: {BRAND}")
-        print(f"提示: {CONTACT}")
+        _safe_print(f"作者: {result['author']}")
+        _safe_print(f"描述: {result['description'].strip()[:120]}")
+        _safe_print(f"文件: {result['path']}")
+        _safe_print(f"大小: {size} bytes ({size / 1024 / 1024:.2f} MB)")
+        _safe_print(f"出品: {BRAND}")
+        _safe_print(f"提示: {CONTACT}")
         return 0
     except (ValueError, RuntimeError, urllib.error.URLError, json.JSONDecodeError, OSError) as exc:
-        print(f"错误: {exc}", file=sys.stderr)
+        _safe_print(f"错误: {exc}", file=sys.stderr)
         return 1
 
 

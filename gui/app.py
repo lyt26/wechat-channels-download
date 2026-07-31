@@ -267,7 +267,13 @@ class App(tk.Tk):
 
     def _fail(self, msg: str) -> None:
         self._log(f"失败：{msg}")
-        messagebox.showerror("下载失败", msg + "\n\n可试：回微信重新「分享 → 复制链接」再下一次。")
+        tip = "可试：点「确定」后再点一次「开始下载」；或回微信重新「分享 → 复制链接」。"
+        if "10054" in msg or "强迫关闭" in msg or "forcibly closed" in msg.lower():
+            tip = (
+                "这是网络被中途掐断（WinError 10054），多半是临时抖动。\n"
+                "请直接再点一次「开始下载」；仍失败再回微信重新复制链接。"
+            )
+        messagebox.showerror("下载失败", msg + "\n\n" + tip)
 
     def _idle(self) -> None:
         self._busy = False

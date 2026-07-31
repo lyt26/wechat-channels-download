@@ -60,10 +60,11 @@ Body: `{"url":"<分享链>"}`
 
 ## 失败回退
 
-1. 重试解析  
-2. 打开 https://sph.litao.workers.dev/ 手工查  
-3. 换新分享链接  
-4. 不要死磕 yt-dlp
+1. 自动重试（WinError 10054 / 连接被掐断时最多再试几次）
+2. 界面或命令行再手动重试一次
+3. 打开 https://sph.litao.workers.dev/ 手工查
+4. 换新分享链接
+5. 不要死磕 yt-dlp
 
 ## 支持
 
@@ -72,3 +73,9 @@ Body: `{"url":"<分享链>"}`
 ## 原理
 
 见 [reference.md](reference.md)。
+
+## 已知问题与改进
+
+- **WinError 10054**：解析或 CDN 偶发断连；`sph_core` 已加重试，界面失败提示会引导再点一次下载。
+- Windows 控制台 GBK 打印含 emoji 的描述会乱码/报错；CLI 已做安全打印，文件名会去掉 emoji。
+- 下一步：批量链接、封面另存、重新打包带重试逻辑的 Windows exe。

@@ -3,7 +3,7 @@
 
 #define MyAppName "视频号下载器"
 #define MyAppNameFull "视频号下载器（小白版）"
-#define MyAppVersion "1.2.2"
+#define MyAppVersion "1.2.3"
 #define MyAppPublisher "上海三松强哥"
 #define MyAppURL "https://github.com/lyt26/wechat-channels-download"
 #define MyAppExeName "ShipinhaoDownloader.exe"
@@ -27,7 +27,7 @@ WizardStyle=modern
 PrivilegesRequired=admin
 ArchitecturesInstallIn64BitMode=x64compatible
 UninstallDisplayName={#MyAppNameFull}
-VersionInfoVersion=1.2.2
+VersionInfoVersion=1.2.3
 VersionInfoProductName={#MyAppName}
 VersionInfoCompany={#MyAppPublisher}
 
